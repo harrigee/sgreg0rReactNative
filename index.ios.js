@@ -13,7 +13,8 @@ import {
   Button,
   Navigator,
   NavigationBar,
-  TouchableHighlight
+  TouchableHighlight,
+  Image
 } from 'react-native';
 import HelloWorldApp from './components/HelloWorldApp';
 
@@ -21,31 +22,29 @@ export default class sgreg0rReactNative extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <Navigator
-
-          navigationBar={
-   <Navigator.NavigationBar
-     routeMapper={{
-       LeftButton: (route, navigator, index, navState) =>
-  {
-    if (route.index === 0) {
-      return null;
-    } else {
-      return (
-        <TouchableHighlight onPress={() => navigator.pop()}>
-          <Text>Back</Text>
-        </TouchableHighlight>
-      );
-    }
-  },
-       RightButton: (route, navigator, index, navState) =>
-         { return (null); },
-       Title: (route, navigator, index, navState) =>
-         { return (<Text>{route.title}</Text>); },
-     }}
-     style={{backgroundColor: 'white'}}
-   />
-}
+        <Navigator navigationBar={
+          <Navigator.NavigationBar
+            routeMapper={{
+              LeftButton: (route, navigator, index, navState) => {
+                if (route.index === 0) {
+                  return null;
+                } else {
+                return (
+                  <TouchableHighlight onPress={() => navigator.pop()}>
+                    <Image source={require('./assets/back.png')} style={{alignSelf:'center'}} />
+                  </TouchableHighlight>
+                );
+              }
+            },
+             RightButton: (route, navigator, index, navState) =>
+               { return (null); },
+             Title: (route, navigator, index, navState) =>
+               { return (<Text style={{color:'white'}}>{route.title}</Text>);
+             },
+           }}
+           style={{backgroundColor: 'black'}}
+         />
+      }
 
           initialRoute={{ title: 'Best screen ever', index: 0 }}
           renderScene={(route, navigator) => {
