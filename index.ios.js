@@ -18,33 +18,43 @@ import {
   ScrollView
 } from 'react-native';
 import HelloWorldApp from './components/HelloWorldApp';
+import BleExample from './components/BleExample';
+
 
 const SideMenu = require('react-native-side-menu');
 
-class ContentView extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+Control+Z for dev menu
-        </Text>
-      </View>
-    );
-  }
+export default class sgreg0rReactNative extends Component {
+
+constructor(props) {
+  super(props);
+  this.state = {
+    menuIsOpen:false
+  };
 }
 
-export default class sgreg0rReactNative extends Component {
   render() {
-    const menu = <Menu/>;
+
+    var _navigator;
+    var _route;
+
+    const menu = <Menu showOans={() => {
+      const nextIndex = _route.index + 1;
+      _navigator.push({
+        title: 'Derp',
+        index: nextIndex,
+      });
+      this.setState({menuIsOpen:false});
+    }}
+    showZwoa={() => {
+      const nextIndex = _route.index + 1;
+      _navigator.push({
+        title: 'BLE',
+        index: nextIndex,
+      });
+      this.setState({menuIsOpen:false});
+    }}/>;
     return (
-      <SideMenu menu={menu}>
+      <SideMenu isOpen={this.props.menuIsOpen} menu={menu}>
       <View style={{flex: 1}}>
         <Navigator navigationBar={
           <Navigator.NavigationBar
@@ -70,27 +80,54 @@ export default class sgreg0rReactNative extends Component {
          />
       }
 
-          initialRoute={{ title: 'Best screen ever', index: 0 }}
+          initialRoute={{ title: 'Derp', index: 0 }}
           renderScene={(route, navigator) => {
-            return <HelloWorldApp title={route.title}
+            _navigator = navigator;
+            _route = route;
+            console.log(route.title);
+            switch (route.title) {
+              case 'Derp':
+                return <HelloWorldApp title={route.title}
 
-              // Function to call when a new scene should be displayed
-            onForward={() => {
-              const nextIndex = route.index + 1;
-              navigator.push({
-                title: 'Almost best screen ever ' + nextIndex,
-                index: nextIndex,
-              });
-            }}
+                  // Function to call when a new scene should be displayed
+                onForward={() => {
+                  const nextIndex = route.index + 1;
 
-            // Function to call to go back to the previous scene
-            onBack={() => {
-              if (route.index > 0) {
-                navigator.pop();
-              }
-            }}
+                  navigator.push({
+                    title: 'Derp',
+                    index: nextIndex,
+                  });
+                }}
 
-            />
+                // Function to call to go back to the previous scene
+                onBack={() => {
+                  if (route.index > 0) {
+                    navigator.pop();
+                  }
+                }}
+
+                />
+                case 'BLE':
+              return <HelloWorldApp title={route.title}
+
+                // Function to call when a new scene should be displayed
+              onForward={() => {
+                const nextIndex = route.index + 1;
+                navigator.push({
+                  title: 'Derp',
+                  index: nextIndex,
+                });
+              }}
+
+              // Function to call to go back to the previous scene
+              onBack={() => {
+                if (route.index > 0) {
+                  navigator.pop();
+                }
+              }}
+
+              />
+            }
           }}
         />
       </View>
@@ -108,18 +145,25 @@ class Menu extends Component {
           <Image
             style={styles.avatar}
             source={{ uri, }}/>
-          <Text style={styles.name}>Your name</Text>
+          <Text style={styles.name}>Deine Mutter</Text>
         </View>
 
-        <Text
-          style={styles.item}>
-          About
-        </Text>
+        <Button
+          onPress={this.props.showOans}
+          title="Oans"
+          style={styles.item}
+          color="#ffffff"
+          accessibilityLabel="Learn more about this purple button"
+        />
 
-        <Text
-          style={styles.item}>
-          Contacts
-        </Text>
+        <Button
+          onPress={this.props.showZwoa}
+          title="Zwoa"
+          style={styles.item}
+            color="#ffffff"
+          accessibilityLabel="Learn more about this purple button"
+        />
+
       </ScrollView>
     );
   }
@@ -129,7 +173,7 @@ const styles = StyleSheet.create({
   menu: {
     flex: 3,
     backgroundColor: '#cc88cc',
-    padding: 20,
+    padding: 32,
   },
   avatarContainer: {
     marginBottom: 20,
@@ -147,9 +191,9 @@ const styles = StyleSheet.create({
     top: 20,
   },
   item: {
-    fontSize: 14,
+    fontSize: 32,
     fontWeight: '300',
-    paddingTop: 5,
+    paddingTop: 64,
   },
 });
 
