@@ -108,7 +108,7 @@ constructor(props) {
 
                 />
                 case 'BLE':
-              return <HelloWorldApp title={route.title}
+              return <BleExample title={route.title}
 
                 // Function to call when a new scene should be displayed
               onForward={() => {

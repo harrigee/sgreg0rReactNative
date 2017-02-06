@@ -44,7 +44,8 @@ class BleExample extends Component {
     }
 
     handleScan() {
-        BleManager.scan([], 30, true).then((results) => {
+        console.log(BleManager);
+        BleManager.scan([], 3000, true).then((results) => {
             console.log('Scanning...');
         });
     }
@@ -95,4 +96,4 @@ class BleExample extends Component {
     }
 }
 
-AppRegistry.registerComponent('BleExample', () => BleExample);
+export default BleExample;
