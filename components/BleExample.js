@@ -27,6 +27,8 @@ class BleExample extends Component {
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
 
         NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+        NativeAppEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateForCharacteristics);
+
 
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.checkPermission(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
@@ -47,7 +49,10 @@ class BleExample extends Component {
 
     componentWillUnmount() {
       NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
-      () => this.toggleScanning(false);
+      NativeAppEventEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateForCharacteristics);
+
+      BleManager.disconnect('5273FE35-8035-4700-AFD7-A203B711B249');
+      this.toggleScanning(false);
     }
 
     handleScan() {
@@ -56,11 +61,12 @@ class BleExample extends Component {
         });
     }
 
-    toggleScanning(bool) {
+    toggleScanning = (bool) => {
         if (bool) {
             this.setState({scanning: true})
             this.scanning = setInterval(() => this.handleScan(), 3000);
         } else {
+          console.log('Stopping scanning');
             this.setState({scanning: false, ble: null})
             clearInterval(this.scanning);
             BleManager.stopScan()
@@ -70,12 +76,85 @@ class BleExample extends Component {
         }
     }
 
-    handleDiscoverPeripheral(data) {
-        console.log('Got ble data', data);
+    handleUpdateForCharacteristics = (data) => {
+        //console.log('Got characteristics data', data.value);
+        this.startNotification();
+    }
+
+    handleDiscoverPeripheral = (data) => {
+        //console.log('Got ble data', data);
         this.setState({ble: data})
         if (data.name === 'OilFox') {
           this.setState({oilFoxFound: true});
+          BleManager.connect(data.id)
+          .then((peripheralInfo) => {
+             this.toggleScanning(false)
+             console.log('Connected');
+             console.log(peripheralInfo);
+             console.log(data);
+             var savedThis = this;
+             this.startNotification();
+             setTimeout(function () {
+               savedThis.writeToDevice()
+             }, 1000);
+           })
+           .catch((error) => {
+             console.log(error);
+           });
         }
+    }
+
+    startNotification = () => {
+      BleManager.startNotification('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
+        .then(() => {
+          // Success code
+          console.log('Notification started');
+          //this.readFromDevice();
+        })
+        .catch((error) => {
+          // Failure code
+          console.log(error);
+        });
+    }
+
+    writeToDevice = () => {
+
+      var base64 = require('base-64');
+      var data = base64.encode('.PING');
+
+      BleManager.write('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400002-B5A3-F393-E0A9-E50E24DCCA9E', data)
+      .then(() => {
+         // Success code
+         var Buffer = require('buffer/').Buffer
+         const resultData1 = new Buffer(data, 'hex');
+         console.log(`Write: ${data}`);
+         var savedThis = this;
+         setTimeout(function () {
+           savedThis.readFromDevice()
+         }, 1000);
+       })
+       .catch((error) => {
+         // Failure code
+         console.log(error);
+       });
+    }
+
+    readFromDevice = () => {
+      BleManager.read('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
+        .then((readData) => {
+          // Success code
+          var Buffer = require('buffer/').Buffer
+          const resultData2 = new Buffer(readData, 'hex');
+          console.log(`Read: ${resultData2}`);
+          var savedThis = this;
+          setTimeout(function () {
+            savedThis.writeToDevice()
+          }, 1000);
+        })
+        .catch((error) => {
+          // Failure code
+          console.log(error);
+        });
     }
 
     isThisOilFox = (deviceName) => {
