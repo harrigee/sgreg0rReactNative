@@ -44,13 +44,12 @@ class BleExample extends Component {
     }
 
     componentWillUnmount() {
-      console.log('willUnMount');
       NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
       () => this.toggleScanning(false);
     }
 
     handleScan() {
-        BleManager.scan([], 5, true).then((results) => {
+        BleManager.scan([], 30, true).then((results) => {
             console.log('Scanning...');
         });
     }
@@ -75,6 +74,13 @@ class BleExample extends Component {
         this.setState({ble: data})
     }
 
+    isThisOilFox = (deviceName) => {
+      if (deviceName === 'OilFox') {
+        return <Text>OilFox</Text>
+      }
+      return <Text>No OilFox</Text>
+    }
+
     render() {
 
         const container = {
@@ -86,7 +92,7 @@ class BleExample extends Component {
 
         const bleList = this.state.ble
             ? <Text>
-                    Device found: {this.state.ble.name}
+                   {this.isThisOilFox(this.state.ble.name)}
                 </Text>
             : <Text>no devices nearby</Text>
 
