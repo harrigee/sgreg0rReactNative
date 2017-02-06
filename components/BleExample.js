@@ -16,11 +16,13 @@ class BleExample extends Component {
         super()
         this.state = {
             ble: null,
-            scanning: false
+            scanning: false,
+            oilFoxFound: false
         }
     }
 
     componentDidMount() {
+        this.setState({oilFoxFound: false});
         BleManager.start({showAlert: true});
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
 
@@ -63,7 +65,6 @@ class BleExample extends Component {
             clearInterval(this.scanning);
             BleManager.stopScan()
             .then(() => {
-              // Success code
               console.log('Scan stopped');
             });
         }
@@ -72,10 +73,13 @@ class BleExample extends Component {
     handleDiscoverPeripheral(data) {
         console.log('Got ble data', data);
         this.setState({ble: data})
+        if (data.name === 'OilFox') {
+          this.setState({oilFoxFound: true});
+        }
     }
 
     isThisOilFox = (deviceName) => {
-      if (deviceName === 'OilFox') {
+      if (this.state.oilFoxFound) {
         return <Text>OilFox</Text>
       }
       return <Text>No OilFox</Text>
