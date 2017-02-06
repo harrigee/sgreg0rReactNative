@@ -21,7 +21,7 @@ class BleExample extends Component {
     }
 
     componentDidMount() {
-        BleManager.start({showAlert: false});
+        BleManager.start({showAlert: true});
         this.handleDiscoverPeripheral = this.handleDiscoverPeripheral.bind(this);
 
         NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
@@ -43,9 +43,14 @@ class BleExample extends Component {
         }
     }
 
+    componentWillUnmount() {
+      console.log('willUnMount');
+      NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
+      () => this.toggleScanning(false);
+    }
+
     handleScan() {
-        console.log(BleManager);
-        BleManager.scan([], 3000, true).then((results) => {
+        BleManager.scan([], 5, true).then((results) => {
             console.log('Scanning...');
         });
     }
@@ -57,6 +62,11 @@ class BleExample extends Component {
         } else {
             this.setState({scanning: false, ble: null})
             clearInterval(this.scanning);
+            BleManager.stopScan()
+            .then(() => {
+              // Success code
+              console.log('Scan stopped');
+            });
         }
     }
 
