@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {
-    AppRegistry,
     Text,
     View,
     TouchableHighlight,
@@ -17,7 +16,9 @@ class BleExample extends Component {
         this.state = {
             ble: null,
             scanning: false,
-            oilFoxFound: false
+            oilFoxFound: false,
+            pingPongString: 'Trying Ping...',
+            oilFoxUUID: "74804861-FE2D-44CF-8F93-81E136058F59"
         }
     }
 
@@ -28,7 +29,6 @@ class BleExample extends Component {
 
         NativeAppEventEmitter.addListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
         NativeAppEventEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateForCharacteristics);
-
 
         if (Platform.OS === 'android' && Platform.Version >= 23) {
             PermissionsAndroid.checkPermission(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
@@ -48,11 +48,12 @@ class BleExample extends Component {
     }
 
     componentWillUnmount() {
+      this.toggleScanning(false);
+      BleManager.stopScan()
       NativeAppEventEmitter.removeListener('BleManagerDiscoverPeripheral', this.handleDiscoverPeripheral);
       NativeAppEventEmitter.removeListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateForCharacteristics);
-
-      BleManager.disconnect('5273FE35-8035-4700-AFD7-A203B711B249');
-      this.toggleScanning(false);
+      BleManager.disconnect(this.state.oilFoxUUID);
+      BleManager.stopNotification(this.state.oilFoxUUID, '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
     }
 
     handleScan() {
@@ -105,7 +106,7 @@ class BleExample extends Component {
     }
 
     startNotification = () => {
-      BleManager.startNotification('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
+      BleManager.startNotification(this.state.oilFoxUUID, '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
         .then(() => {
           // Success code
           console.log('Notification started');
@@ -122,13 +123,14 @@ class BleExample extends Component {
       var base64 = require('base-64');
       var data = base64.encode('.PING');
 
-      BleManager.write('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400002-B5A3-F393-E0A9-E50E24DCCA9E', data)
+      BleManager.write(this.state.oilFoxUUID, '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400002-B5A3-F393-E0A9-E50E24DCCA9E', data)
       .then(() => {
          // Success code
          var Buffer = require('buffer/').Buffer
          const resultData1 = new Buffer(data, 'hex');
          console.log(`Write: ${data}`);
          var savedThis = this;
+         this.setState({pingPongString:'Ping'});
          setTimeout(function () {
            savedThis.readFromDevice()
          }, 1000);
@@ -140,13 +142,14 @@ class BleExample extends Component {
     }
 
     readFromDevice = () => {
-      BleManager.read('5273FE35-8035-4700-AFD7-A203B711B249', '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
+      BleManager.read(this.state.oilFoxUUID, '6E400001-B5A3-F393-E0A9-E50E24DCCA9E', '6E400003-B5A3-F393-E0A9-E50E24DCCA9E')
         .then((readData) => {
           // Success code
           var Buffer = require('buffer/').Buffer
           const resultData2 = new Buffer(readData, 'hex');
           console.log(`Read: ${resultData2}`);
           var savedThis = this;
+          this.setState({pingPongString:resultData2});
           setTimeout(function () {
             savedThis.writeToDevice()
           }, 1000);
@@ -159,7 +162,7 @@ class BleExample extends Component {
 
     isThisOilFox = (deviceName) => {
       if (this.state.oilFoxFound) {
-        return <Text>OilFox</Text>
+        return <Text>OilFox - { this.state.pingPongString }</Text>
       }
       return <Text>No OilFox</Text>
     }

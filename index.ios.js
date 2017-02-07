@@ -17,9 +17,10 @@ import {
   Image,
   ScrollView
 } from 'react-native';
+
 import HelloWorldApp from './components/HelloWorldApp';
 import BleExample from './components/BleExample';
-
+import Dashboard from './components/Dashboard';
 
 const SideMenu = require('react-native-side-menu');
 
@@ -28,7 +29,8 @@ export default class sgreg0rReactNative extends Component {
 constructor(props) {
   super(props);
   this.state = {
-    menuIsOpen:false
+    menuIsOpen:false,
+    isBLE:false
   };
 }
 
@@ -37,99 +39,85 @@ constructor(props) {
     var _navigator;
     var _route;
 
+    const BLE = <BleExample title={'BLE'}/>;
+
+    const DashScreen = <Dashboard/>;
+
+    const Derp = <Navigator navigationBar={
+      <Navigator.NavigationBar
+        routeMapper={{
+          LeftButton: (route, navigator, index, navState) => {
+            if (route.index === 0) {
+              return null;
+            } else {
+            return (
+              <TouchableHighlight onPress={() => navigator.pop()}>
+                <Image source={require('./assets/back.png')} style={{alignSelf:'center', width:32, height:32}} />
+              </TouchableHighlight>
+            );
+          }
+        },
+         RightButton: (route, navigator, index, navState) =>
+           { return (null); },
+         Title: (route, navigator, index, navState) =>
+           { return (<Text style={{color:'white'}}>{route.title}</Text>);
+         },
+       }}
+       style={{backgroundColor: 'black'}}
+     />
+  }
+
+      initialRoute={{ title: 'Derp', index: 0 }}
+      renderScene={(route, navigator) => {
+        _navigator = navigator;
+        _route = route;
+        console.log(route.title);
+        switch (route.title) {
+          case 'Derp':
+            return <HelloWorldApp title={route.title}
+
+              // Function to call when a new scene should be displayed
+            onForward={() => {
+              const nextIndex = route.index + 1;
+
+              navigator.push({
+                title: 'Derp',
+                index: nextIndex,
+              });
+            }}
+
+            // Function to call to go back to the previous scene
+            onBack={() => {
+              if (route.index > 0) {
+                navigator.pop();
+              }
+            }}
+
+            />
+        }
+      }}
+    />;
+
     const menu = <Menu showOans={() => {
-      const nextIndex = _route.index + 1;
+      /*const nextIndex = _route.index + 1;
       _navigator.push({
         title: 'Derp',
         index: nextIndex,
-      });
-      this.setState({menuIsOpen:false});
+      });*/
+      this.setState({menuIsOpen:false, isBLE:false});
     }}
     showZwoa={() => {
-      const nextIndex = _route.index + 1;
+      /*const nextIndex = _route.index + 1;
       _navigator.push({
         title: 'BLE',
         index: nextIndex,
-      });
-      this.setState({menuIsOpen:false});
+      });*/
+      this.setState({menuIsOpen:false, isBLE:true});
     }}/>;
     return (
-      <SideMenu isOpen={this.props.menuIsOpen} menu={menu}>
+      <SideMenu bounceBackOnOverdraw={false} isOpen={this.props.menuIsOpen} menu={menu}>
       <View style={{flex: 1}}>
-        <Navigator navigationBar={
-          <Navigator.NavigationBar
-            routeMapper={{
-              LeftButton: (route, navigator, index, navState) => {
-                if (route.index === 0) {
-                  return null;
-                } else {
-                return (
-                  <TouchableHighlight onPress={() => navigator.pop()}>
-                    <Image source={require('./assets/back.png')} style={{alignSelf:'center', width:32, height:32}} />
-                  </TouchableHighlight>
-                );
-              }
-            },
-             RightButton: (route, navigator, index, navState) =>
-               { return (null); },
-             Title: (route, navigator, index, navState) =>
-               { return (<Text style={{color:'white'}}>{route.title}</Text>);
-             },
-           }}
-           style={{backgroundColor: 'black'}}
-         />
-      }
-
-          initialRoute={{ title: 'Derp', index: 0 }}
-          renderScene={(route, navigator) => {
-            _navigator = navigator;
-            _route = route;
-            console.log(route.title);
-            switch (route.title) {
-              case 'Derp':
-                return <HelloWorldApp title={route.title}
-
-                  // Function to call when a new scene should be displayed
-                onForward={() => {
-                  const nextIndex = route.index + 1;
-
-                  navigator.push({
-                    title: 'Derp',
-                    index: nextIndex,
-                  });
-                }}
-
-                // Function to call to go back to the previous scene
-                onBack={() => {
-                  if (route.index > 0) {
-                    navigator.pop();
-                  }
-                }}
-
-                />
-                case 'BLE':
-              return <BleExample title={route.title}
-
-                // Function to call when a new scene should be displayed
-              onForward={() => {
-                const nextIndex = route.index + 1;
-                navigator.push({
-                  title: 'Derp',
-                  index: nextIndex,
-                });
-              }}
-
-              // Function to call to go back to the previous scene
-              onBack={() => {
-                if (route.index > 0) {
-                  navigator.pop();
-                }
-              }}
-
-              />
-            }
-          }}
-        />
+        {this.state.isBLE ? BLE : DashScreen}
       </View>
     </SideMenu>
     );
@@ -147,7 +135,6 @@ class Menu extends Component {
             source={{ uri, }}/>
           <Text style={styles.name}>Deine Mutter</Text>
         </View>
-
         <Button
           onPress={this.props.showOans}
           title="Oans"
