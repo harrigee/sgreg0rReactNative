@@ -9,9 +9,19 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  Button,
+  Navigator,
+  NavigationBar,
+  TouchableHighlight,
+  Image,
+  ScrollView
 } from 'react-native';
-import HelloWorldApp from './jsx/HelloWorldApp';
+import HelloWorldApp from './components/HelloWorldApp';
+import BleExample from './components/BleExample';
+import Dashboard from './components/Dashboard';
+
+const SideMenu = require('react-native-side-menu');
 
 export default class sgreg0rReactNative extends Component {
 
@@ -19,16 +29,19 @@ constructor(props) {
   super(props);
   this.state = {
     menuIsOpen:false,
-    isBLE:false
+    screen:'0'
   };
 }
-
   render() {
 
     var _navigator;
     var _route;
 
     const BLE = <BleExample title={'BLE'}/>;
+
+    const DashScreen = <Dashboard/>;
+
+    const HelloScreen = <HelloWorldApp/>;
 
     const Derp = <Navigator navigationBar={
       <Navigator.NavigationBar
@@ -86,27 +99,22 @@ constructor(props) {
     />;
 
     const menu = <Menu showOans={() => {
-      /*const nextIndex = _route.index + 1;
-      _navigator.push({
-        title: 'Derp',
-        index: nextIndex,
-      });*/
-      this.setState({menuIsOpen:false, isBLE:false});
+      this.setState({menuIsOpen:false, screen:'0'});
     }}
     showZwoa={() => {
-      /*const nextIndex = _route.index + 1;
-      _navigator.push({
-        title: 'BLE',
-        index: nextIndex,
-      });*/
-      this.setState({menuIsOpen:false, isBLE:true});
-    }}/>;
+      this.setState({menuIsOpen:false, screen:'1'});
+    }}
+    showDrei={() => {
+        this.setState({menuIsOpen:false, screen:'2'});
+      }}/>;
     return (
       <SideMenu bounceBackOnOverdraw={false} isOpen={this.props.menuIsOpen} menu={menu}>
-      <View style={{flex: 1}}>
-        {this.state.isBLE ? BLE : Derp}
-      </View>
-    </SideMenu>
+        <View style={{flex: 1, backgroundColor: 'cadetblue'}}>
+        { this.state.screen === '0' ? DashScreen : null }
+        { this.state.screen === '1' ? Derp : null }
+        { this.state.screen === '2' ? BLE : null }
+        </View>
+      </SideMenu>
     );
   }
 }
@@ -124,17 +132,19 @@ class Menu extends Component {
         </View>
         <Button
           onPress={this.props.showOans}
-          title="Oans"
-          style={styles.item}
-          color="#ffffff"
+          title="Dääschboard"
           accessibilityLabel="Learn more about this purple button"
         />
 
         <Button
           onPress={this.props.showZwoa}
-          title="Zwoa"
-          style={styles.item}
-            color="#ffffff"
+          title="Derp?"
+          accessibilityLabel="Learn more about this purple button"
+        />
+
+        <Button
+          onPress={this.props.showDrei}
+          title="BLE Dings"
           accessibilityLabel="Learn more about this purple button"
         />
 
@@ -165,9 +175,7 @@ const styles = StyleSheet.create({
     top: 20,
   },
   item: {
-    fontSize: 32,
-    fontWeight: '300',
-    paddingTop: 64,
+
   },
 });
 

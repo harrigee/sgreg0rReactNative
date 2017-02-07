@@ -8,7 +8,7 @@ import {
     ListView,
     Image,
     Dimensions,
-    StatusBar
+    StatusBar,
 } from 'react-native';
 
 class Dashboard extends Component {
@@ -26,12 +26,17 @@ class Dashboard extends Component {
         this.state = {
             text: '',
             fillingImages: [require('../assets/0.png'), require('../assets/1.png'), require('../assets/2.png'), require('../assets/3.png'), require('../assets/4.png'), require('../assets/5.png')],
-            indexFillingImage: 0
+            indexFillingImage: 0,
+            interval:false,
         };
     }
 
     componentDidMount() {
-      setInterval(() => this.handleInterval(), 100);
+      this.setState({interval:setInterval(() => this.handleInterval(), 1000)});
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.state.interval);
     }
 
     handleInterval = () => {

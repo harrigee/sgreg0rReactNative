@@ -110,12 +110,12 @@ constructor(props) {
       }}/>;
     return (
       <SideMenu bounceBackOnOverdraw={false} isOpen={this.props.menuIsOpen} menu={menu}>
-      <View style={{flex: 1}}>
-      { this.state.screen === '0' ? DashScreen : null }
-      { this.state.screen === '1' ? Derp : null }
-      { this.state.screen === '2' ? BLE : null }
-      </View>
-    </SideMenu>
+        <View style={{flex: 1, backgroundColor: 'cadetblue'}}>
+        { this.state.screen === '0' ? DashScreen : null }
+        { this.state.screen === '1' ? Derp : null }
+        { this.state.screen === '2' ? BLE : null }
+        </View>
+      </SideMenu>
     );
   }
 }
@@ -134,24 +134,18 @@ class Menu extends Component {
         <Button
           onPress={this.props.showOans}
           title="Dääschboard"
-          style={styles.item}
-          color="#ffffff"
           accessibilityLabel="Learn more about this purple button"
         />
 
         <Button
           onPress={this.props.showZwoa}
           title="Derp?"
-          style={styles.item}
-            color="#ffffff"
           accessibilityLabel="Learn more about this purple button"
         />
 
         <Button
           onPress={this.props.showDrei}
           title="BLE Dings"
-          style={styles.item}
-            color="#ffffff"
           accessibilityLabel="Learn more about this purple button"
         />
 
@@ -180,11 +174,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 70,
     top: 20,
-  },
-  item: {
-    fontSize: 32,
-    fontWeight: '300',
-    paddingTop: 64,
   },
 });
 

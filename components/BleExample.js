@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    AppRegistry,
     Text,
     View,
     TouchableHighlight,
@@ -65,7 +66,7 @@ class BleExample extends Component {
     toggleScanning = (bool) => {
         if (bool) {
             this.setState({scanning: true})
-            this.scanning = setInterval(() => this.handleScan(), 3000);
+            this.setState({scanning:setInterval(() => this.handleScan(), 3000)});
         } else {
           console.log('Stopping scanning');
             this.setState({scanning: false, ble: null})
@@ -130,7 +131,7 @@ class BleExample extends Component {
          const resultData1 = new Buffer(data, 'hex');
          console.log(`Write: ${data}`);
          var savedThis = this;
-         this.setState({pingPongString:'Ping'});
+         savedThis.setState({pingPongString:`Write: Ping`});
          setTimeout(function () {
            savedThis.readFromDevice()
          }, 1000);
@@ -149,7 +150,7 @@ class BleExample extends Component {
           const resultData2 = new Buffer(readData, 'hex');
           console.log(`Read: ${resultData2}`);
           var savedThis = this;
-          this.setState({pingPongString:resultData2});
+          savedThis.setState({pingPongString:`Read: ${resultData2}`});
           setTimeout(function () {
             savedThis.writeToDevice()
           }, 1000);
