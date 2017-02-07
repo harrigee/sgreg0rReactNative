@@ -47,8 +47,10 @@ class Dashboard extends Component {
         return (
             <View style={{
                 flex: 1,
-                paddingTop: 64,
-                backgroundColor: 'cadetblue'
+                paddingTop: -64,
+                backgroundColor: 'cadetblue',
+                justifyContent: 'center',
+                alignItems: 'center'
             }}>
                 <StatusBar barStyle="light-content"/>
                 <View>
@@ -62,8 +64,7 @@ class Dashboard extends Component {
                         width: this.vw(80),
                         resizeMode: 'contain',
                         position: 'absolute',
-                        alignSelf:'center',
-                        left: this.vw(10)
+                        alignSelf:'center'
                     }}/>
                 </View>
             </View>
