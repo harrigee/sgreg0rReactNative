@@ -30,10 +30,9 @@ constructor(props) {
   super(props);
   this.state = {
     menuIsOpen:false,
-    isBLE:false
+    screen:'0'
   };
 }
-
   render() {
 
     var _navigator;
@@ -42,6 +41,8 @@ constructor(props) {
     const BLE = <BleExample title={'BLE'}/>;
 
     const DashScreen = <Dashboard/>;
+
+    const HelloScreen = <HelloWorldApp/>;
 
     const Derp = <Navigator navigationBar={
       <Navigator.NavigationBar
@@ -99,25 +100,20 @@ constructor(props) {
     />;
 
     const menu = <Menu showOans={() => {
-      /*const nextIndex = _route.index + 1;
-      _navigator.push({
-        title: 'Derp',
-        index: nextIndex,
-      });*/
-      this.setState({menuIsOpen:false, isBLE:false});
+      this.setState({menuIsOpen:false, screen:'0'});
     }}
     showZwoa={() => {
-      /*const nextIndex = _route.index + 1;
-      _navigator.push({
-        title: 'BLE',
-        index: nextIndex,
-      });*/
-      this.setState({menuIsOpen:false, isBLE:true});
-    }}/>;
+      this.setState({menuIsOpen:false, screen:'1'});
+    }}
+    showDrei={() => {
+        this.setState({menuIsOpen:false, screen:'2'});
+      }}/>;
     return (
       <SideMenu bounceBackOnOverdraw={false} isOpen={this.props.menuIsOpen} menu={menu}>
       <View style={{flex: 1}}>
-        {this.state.isBLE ? BLE : DashScreen}
+      { this.state.screen === '0' ? DashScreen : null }
+      { this.state.screen === '1' ? Derp : null }
+      { this.state.screen === '2' ? BLE : null }
       </View>
     </SideMenu>
     );
@@ -137,7 +133,7 @@ class Menu extends Component {
         </View>
         <Button
           onPress={this.props.showOans}
-          title="Oans"
+          title="Dääschboard"
           style={styles.item}
           color="#ffffff"
           accessibilityLabel="Learn more about this purple button"
@@ -145,7 +141,15 @@ class Menu extends Component {
 
         <Button
           onPress={this.props.showZwoa}
-          title="Zwoa"
+          title="Derp?"
+          style={styles.item}
+            color="#ffffff"
+          accessibilityLabel="Learn more about this purple button"
+        />
+
+        <Button
+          onPress={this.props.showDrei}
+          title="BLE Dings"
           style={styles.item}
             color="#ffffff"
           accessibilityLabel="Learn more about this purple button"
